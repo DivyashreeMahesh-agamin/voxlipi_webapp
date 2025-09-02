@@ -24,7 +24,7 @@ class _LoginPage1State extends State<LoginPage1> {
   bool isPasswordObscured = true;
   bool rememberMe = false;
   bool isButtonEnabled = false;
-
+  bool isLoading = false;
   String? emailError;
   String? passwordError;
   String? rememberMeError;
@@ -72,7 +72,7 @@ class _LoginPage1State extends State<LoginPage1> {
 
     print('Sending forgot password request with token: $token');
 
-    final Uri url = Uri.parse('http://192.168.31.236:8003/nursing_app_api/api/v1/forgot-password');
+    final Uri url = Uri.parse('http://54.205.191.197:8003/nursing_app_api/api/v1/forgot-password');
 
     try {
       final headers = <String, String>{
@@ -158,14 +158,60 @@ class _LoginPage1State extends State<LoginPage1> {
     });
   }
 
-  void validateAndLogin() {
+  Future<void> validateAndLogin() async {
     validateFields();
-    if (emailError == null && passwordError == null && rememberMe) {
-      showSuccessToast(context, 'You have logged in successfully.', 'N/A');
-      context.go('/Voxlipi/Onboarding');
 
+    // Only proceed if email and password are valid
+    if (emailError == null && passwordError == null) {
+      setState(() {
+        isLoading = true;
+      });
+
+      final String email = emailController.text.trim();
+      final String password = passwordController.text;
+
+      final Uri url = Uri.http(
+        '54.205.191.197:8003',
+        '/nursing_app_api/login',
+        {
+          'email': email,
+          'password': password,
+        },
+      );
+
+      try {
+        final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        );
+
+        final responseJson = json.decode(response.body);
+        print('Login response: $responseJson');
+
+        if (response.statusCode == 200) {
+          // Successful login
+          showSuccessToast(context, 'You have logged in successfully.', 'N/A');
+
+          // Navigate to Onboarding page (example using go_router)
+          context.go('/Voxlipi/Onboarding');
+        } else {
+          // Login failed
+          final errorMessage = responseJson['message'] ?? 'Login failed';
+          showErrorToast(context, errorMessage);
+        }
+      } catch (e) {
+        showErrorToast(context, 'Login failed: $e');
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
+
 
   void showSuccessToast(BuildContext context, String message, String code) {
     final overlay = Overlay.of(context);

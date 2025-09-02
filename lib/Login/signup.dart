@@ -21,6 +21,7 @@ class _WebSignUpPageState extends State<WebSignUpPage> {
   final TextEditingController facilityController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController medicalGroupController = TextEditingController();
 
   bool isPasswordObscured = true;
   bool isConfirmPasswordObscured = true;
@@ -53,15 +54,18 @@ class _WebSignUpPageState extends State<WebSignUpPage> {
   Future<void> handleSignUpPressed() async {
     final String firstName = firstNameController.text.trim();
     final String lastName = lastNameController.text.trim();
-    final String newPassword = newPasswordController.text;
-    final String confirmPassword = confirmPasswordController.text;
-    final String medicalGroup = "HealthCare"; // or get from input if needed
+    final String newPassword = newPasswordController.text.trim();
+    final String confirmPassword = confirmPasswordController.text.trim();
+    final String medicalGroup = facilityController.text.trim();
+
+
+
 
     setState(() {
       isLoading = true;
     });
 
-    final url = Uri.parse('http://192.168.31.236:8003/nursing_app_api/admin/system-users');
+    final url = Uri.parse('http://54.205.191.197:8003/nursing_app_api/admin/system-users');
 
     final Map<String, String> payload = {
       'first_name': firstName,
@@ -74,8 +78,12 @@ class _WebSignUpPageState extends State<WebSignUpPage> {
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(payload),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+
+          body: json.encode(payload),
       );
 
       final responseJson = json.decode(response.body);

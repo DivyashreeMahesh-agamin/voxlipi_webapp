@@ -26,7 +26,7 @@ void main() {
 
 // ✅ Define GoRouter with custom base path
 final _router = GoRouter(
-  initialLocation: '/Voxlipi/Web-Signup',
+  initialLocation: '/Voxlipi/login',
   routes: [
 
     GoRoute(

@@ -129,7 +129,7 @@ class _WebLoginPageState extends State<WebLoginPage> {
       print('Sending login request...');
 
       final Uri url = Uri.http(
-        '192.168.31.236:8003',
+        '54.205.191.197:8003',
         '/nursing_app_api/login',
         {
           'email': email,

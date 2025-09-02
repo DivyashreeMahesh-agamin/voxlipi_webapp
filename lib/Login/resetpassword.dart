@@ -88,7 +88,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     final newPassword = newPasswordController.text.trim();
     final confirmPassword = confirmPasswordController.text.trim();
 
-    final url = Uri.parse('http://192.168.31.236:8003/nursing_app_api/reset-password');
+    final url = Uri.parse('http://54.205.191.197:8003/nursing_app_api/reset-password');
 
     try {
       final response = await http.post(
